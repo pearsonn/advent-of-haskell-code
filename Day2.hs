@@ -4,7 +4,7 @@ input = [1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,10,1,19,1,6,19,23,2,23,6,27,1,5,27,31
 
 run :: IntCodes -> [Int] -> IntCodes
 run codes (99:_) = codes
-run codes instr@(opCode:a:b:c:_) = run program (drop 4 instr)
+run codes (opCode:a:b:c:instr) = run program instr
     where
         program = execute f codes a b c        
         f | opCode == 1 = (+)
