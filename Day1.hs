@@ -1,3 +1,5 @@
+import Util
+
 solve1 :: Integral a => [a] -> a
 solve1 = sum . map fuel    
 
@@ -11,10 +13,5 @@ totalFuel x
     where f = fuel x
 
 fuel x = x `div` 3 - 2
-
-fileInteract :: String -> (String -> String) -> IO ()
-fileInteract file f = do
-    input <- readFile file
-    putStrLn (f input)
 
 main = fileInteract "day1.txt" $ show . solve2 . map read . lines
