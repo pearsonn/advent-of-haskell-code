@@ -1,15 +1,16 @@
 import Data.List
+import Control.Arrow
 
 start = 134792
 end = 675810
 
-isIncreasing :: String -> Bool
-isIncreasing xs = and $ zipWith (<=) ('0':xs) xs
+isIncreasing :: Ord a => [a] -> Bool
+isIncreasing xs = and $ zipWith (<=) xs (tail xs)
 
-containsPair :: String -> Bool
+containsPair :: Ord a => [a] -> Bool
 containsPair xs = length (group xs) /= length xs 
 
-containsPairExact :: String -> Bool
+containsPairExact :: Ord a => [a] -> Bool
 containsPairExact = any (==2) . map length . group
 
 solve :: Int
