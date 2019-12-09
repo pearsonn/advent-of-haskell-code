@@ -1,5 +1,5 @@
 import Data.List
-import Control.Arrow
+import Control.Monad
 
 start = 134792
 end = 675810
@@ -14,7 +14,7 @@ containsPairExact :: Ord a => [a] -> Bool
 containsPairExact = any (==2) . map length . group
 
 solve :: Int
-solve = length $ filter (\x -> isIncreasing x && containsPair x) $ map show [start..end]
+solve = length $ filter (liftM2 (&&) isIncreasing containsPair) $ map show [start..end]
 
 solve2 :: Int
-solve2 = length $ filter (\x -> isIncreasing x && containsPairExact x) $ map show [start..end]
+solve2 = length $ filter (liftM2 (&&) isIncreasing containsPairExact) $ map show [start..end]
