@@ -1,14 +1,14 @@
 import IntCodes
 import Data.List
 
-part1 :: [Int] -> Int
+part1 :: IntCodes -> Integer
 part1 codes = maximum $ map runSerial (permutations [0..4])
     where runSerial = foldl' (\output phase -> head (runProgram codes [phase, output])) 0
 
-part2 :: [Int] -> Int
+part2 :: IntCodes -> Integer
 part2 codes = maximum $ map (head . input . head . runLoop 0 . initAmplifiers) (permutations [5..9])
     where 
-        runLoop :: Int -> [Program] -> [Program]
+        runLoop :: Integer -> [Program] -> [Program]
         runLoop i amps
             | any terminated amps = amps
             | otherwise = let nextInput = head $ output $ last nextAmps
@@ -20,7 +20,7 @@ part2 codes = maximum $ map (head . input . head . runLoop 0 . initAmplifiers) (
         initAmplifiers = map (initProgram codes . (:[]))
 
 --run the program with the given input until it generates an output or terminates
-nextOutput :: Program -> Int -> Program
+nextOutput :: Program -> Integer -> Program
 nextOutput p i = next p { input = input p ++ [i] }
         where 
             next p@(Program { terminated = True }) = p { output = [i] }

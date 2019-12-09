@@ -1,12 +1,12 @@
 import IntCodes
 
-part1 :: [Int] -> [Int]
+part1 :: IntCodes -> [Integer]
 part1 = getDiagnosticCode [1]
 
-part2 :: [Int] -> [Int]
+part2 :: IntCodes -> [Integer]
 part2 = getDiagnosticCode [5]
 
-getDiagnosticCode :: [Int] -> ([Int] -> [Int])
+getDiagnosticCode :: [Integer] -> IntCodes -> [Integer]
 getDiagnosticCode = flip runProgram
 
 main = interact $ show . part2 . read . ('[':) . (++"]")

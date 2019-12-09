@@ -40,8 +40,6 @@ execute program (Instruction op params) =
         f 8 p = executeBinary ((boolToInt .) . (==)) p
         f 9 ((p, m):[]) = advancePtr 2 program { relativeBase = relativeBase program + valueOf p m }
         f _ _ = error "Unknown opcode"
-        boolToInt True = 1
-        boolToInt False = 0
     in f op params 
     where
         advancePtr num p = p { ptr = ptr p + num }
@@ -56,6 +54,8 @@ execute program (Instruction op params) =
         valueOf param Position = M.findWithDefault 0 param (codes program)
         valueOf param Relative = M.findWithDefault 0 (relativeBase program + param) (codes program)
         valueOf param _ = param
+        boolToInt True = 1
+        boolToInt False = 0
 
 nextInstruction :: Program -> Instruction
 nextInstruction (Program codes ptr _ _ _ _) = Instruction opCode params
@@ -69,9 +69,6 @@ nextInstruction (Program codes ptr _ _ _ _) = Instruction opCode params
         mode 0 = Position
         mode 1 = Immediate
         mode 2 = Relative
-
-testInput :: [Integer]
-testInput = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
 
 runProgram :: IntCodes -> [Integer] -> [Integer]
 runProgram codes input = output $ runProgram' $ initProgram codes input
