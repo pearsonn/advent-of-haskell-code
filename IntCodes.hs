@@ -27,10 +27,12 @@ execute program (Instruction 99 _ ) = program { terminated = True }
 execute program (Instruction op params) =
     let f 1 p = executeBinary (+) p
         f 2 p = executeBinary (*) p
-        f 3 (p:[]) = program { 
-            codes = store (head (input program)) p, 
-            input = tail (input program), 
-            ptr = ptr program + 2 }
+        f 3 (p:[])
+            | null $ input program = error "Waiting for input"
+            | otherwise = program { 
+                codes = store (head (input program)) p, 
+                input = tail (input program), 
+                ptr = ptr program + 2 }
         f 4 ((p, m):[]) = program { 
             output = valueOf p m : output program, 
             ptr = ptr program + 2 }
