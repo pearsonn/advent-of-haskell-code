@@ -70,6 +70,16 @@ nextInstruction (Program codes ptr _ _ _ _) = Instruction opCode params
         mode 1 = Immediate
         mode 2 = Relative
 
+--run the program with the given input until it generates an output or terminates
+nextOutput :: Program -> Program
+nextOutput p = next p
+        where 
+            next p@(Program { terminated = True }) = p
+            next p  --recursively execute next instruction 
+                | length (output prog) /= length (output p) = prog
+                | otherwise = next prog
+                where prog = execute p $ nextInstruction p
+
 runProgram :: IntCodes -> [Integer] -> [Integer]
 runProgram codes input = output $ runProgram' $ initProgram codes input
         where 
