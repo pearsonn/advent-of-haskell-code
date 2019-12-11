@@ -1,5 +1,4 @@
 import Prelude hiding(Right, Left)
-import Data.Maybe (listToMaybe)
 import Data.List.Split
 import IntCodes
 import Util
@@ -13,6 +12,27 @@ data Robot = Robot {
     facing :: Direction,
     position :: Point
 } deriving Show
+
+main :: IO ()
+main = interact $ part2 . initRobot . parseInput
+
+parseInput :: String -> IntCodes
+parseInput = read . ('[':) . (++"]")
+
+part1 :: Robot -> String
+part1 = show . M.size . hull . paintHull
+
+part2 :: Robot -> String
+part2 r = unlines $ chunksOf (maxX - minX + 1) $ map (asChar . flip (M.findWithDefault 0) hullMap) [(x, y) | y <- [maxY, maxY-1..minY], x <- [minX..maxX]]
+    where
+        asChar 0 = ' '
+        asChar 1 = '#'
+        maxX = valueOf maximum fst + 1
+        maxY = valueOf maximum snd + 1
+        minX = valueOf minimum fst - 1
+        minY = valueOf minimum snd - 1
+        valueOf acc which = acc $ map (which . fst) $ M.toList hullMap
+        hullMap = hull $ paintHull $ r { hull = M.insert (0, 0) 1 (hull r) }
 
 initRobot :: IntCodes -> Robot
 initRobot codes = Robot {
@@ -51,23 +71,3 @@ translate1 Up point = (fst point, snd point + 1)
 translate1 Down point = (fst point, snd point - 1)
 translate1 Right point = (fst point + 1, snd point)
 translate1 Left point = (fst point - 1, snd point)
-
-part1 :: Robot -> String
-part1 = show . M.size . hull . paintHull
-
-part2 :: Robot -> String
-part2 r = unlines $ chunksOf (maxX - minX + 1) $ map (asChar . flip (M.findWithDefault 0) hullMap) [(x, y) | y <- [maxY, maxY-1..minY], x <- [minX..maxX]]
-    where
-        asChar 0 = ' '
-        asChar 1 = '#'
-        maxX = valueOf maximum fst + 1
-        maxY = valueOf maximum snd + 1
-        minX = valueOf minimum fst - 1
-        minY = valueOf minimum snd - 1
-        valueOf acc which = acc $ map (which . fst) $ M.toList hullMap
-        hullMap = hull $ paintHull $ r { hull = M.insert (0, 0) 1 (hull r) }
-
-parseInput :: String -> IntCodes
-parseInput = read . ('[':) . (++"]")
-
-main = interact $ part2 . initRobot . parseInput
