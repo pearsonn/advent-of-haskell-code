@@ -15,17 +15,12 @@ part2 codes = maximum $ map (head . input . head . runLoop 0 . initAmplifiers) (
                           in runLoop nextInput (map (\a -> a { output = [] }) nextAmps)
             where 
                 nextAmps = runSerial i amps
-                runSerial i amps = scanl feedToNext (nextOutput (head amps) i) (tail amps)
-                feedToNext a b = if terminated a then a else nextOutput b (head $ output a)
-        initAmplifiers = map (initProgram codes . (:[]))
+                runSerial i amps = scanl feedToNext (next (head amps) i) (tail amps)
+                feedToNext a b = if terminated a then a else next b (head $ output a)
+        initAmplifiers = map (initProgram codes . pure)
 
---run the program with the given input until it generates an output or terminates
-nextOutput :: Program -> Integer -> Program
-nextOutput p i = next p { input = input p ++ [i] }
-        where 
-            next p@(Program { terminated = True }) = p { output = [i] }
-            next p@(Program { output = (x:[])}) = p
-            next p = next $ execute p $ nextInstruction p --recursively execute next instruction        
+next :: Program -> Integer -> Program
+next p i = nextOutput p { input = input p ++ [i] }       
 
 parseInput :: String -> IntCodes
 parseInput = read . ('[':) . (++"]")

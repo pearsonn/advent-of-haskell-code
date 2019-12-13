@@ -23,7 +23,10 @@ part1 :: Robot -> String
 part1 = show . M.size . hull . paintHull
 
 part2 :: Robot -> String
-part2 r = unlines $ chunksOf (maxX - minX + 1) $ map (asChar . flip (M.findWithDefault 0) hullMap) [(x, y) | y <- [maxY, maxY-1..minY], x <- [minX..maxX]]
+part2 r = unlines 
+    $ chunksOf (maxX - minX + 1) 
+    $ map (asChar . flip (M.findWithDefault 0) hullMap) 
+    [(x, y) | y <- [maxY, maxY-1..minY], x <- [minX..maxX]]
     where
         asChar 0 = ' '
         asChar 1 = '#'
@@ -47,9 +50,8 @@ paintHull r@(Robot { program = Program { terminated = True }}) = r
 paintHull r = paintHull $ paintNext r
 
 paintNext :: Robot -> Robot
-paintNext r@(Robot { program = Program { terminated = True }}) = r
-paintNext r = update $ (output prog)
-    where        
+paintNext r = update $ output prog
+    where --order is reversed due to input and output being treated as a stack
         update (d:c:[]) = turn (r { 
             program = prog { output = [] },
             hull = M.insert (position r) c (hull r)}) (fromIntegral d)
